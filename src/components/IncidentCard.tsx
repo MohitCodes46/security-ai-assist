@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, User, ExternalLink, Bot } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface IncidentCardProps {
   id: string;
@@ -29,6 +30,8 @@ const statusConfig = {
 export const IncidentCard = ({ 
   id, title, severity, timestamp, assignee, status, aiConfidence, suggestedAction 
 }: IncidentCardProps) => {
+  const navigate = useNavigate();
+  
   return (
     <Card className="bg-gradient-to-r from-card to-muted/20 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
       <CardHeader className="pb-3">
@@ -74,7 +77,12 @@ export const IncidentCard = ({
         </div>
 
         <div className="flex space-x-2 pt-2">
-          <Button variant="outline" size="sm" className="flex-1">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+            onClick={() => navigate(`/incident/${id}`)}
+          >
             <ExternalLink className="h-4 w-4 mr-2" />
             View Details
           </Button>
