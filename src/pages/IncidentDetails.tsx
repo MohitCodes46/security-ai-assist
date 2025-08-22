@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,10 +9,21 @@ import {
   FileText, ExternalLink, Play, CheckCircle, XCircle,
   TrendingUp, Database, Server, Zap
 } from "lucide-react";
+import { ReassignDialog } from "@/components/dialogs/ReassignDialog";
+import { ResolveDialog } from "@/components/dialogs/ResolveDialog";
+import { JiraDialog } from "@/components/dialogs/JiraDialog";
+import { AIFixDialog } from "@/components/dialogs/AIFixDialog";
+import { useToast } from "@/hooks/use-toast";
 
 const IncidentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const [reassignOpen, setReassignOpen] = useState(false);
+  const [resolveOpen, setResolveOpen] = useState(false);
+  const [jiraOpen, setJiraOpen] = useState(false);
+  const [aiFixOpen, setAiFixOpen] = useState(false);
 
   // Mock data - in real app this would come from an API
   const incident = {
@@ -69,6 +81,32 @@ const IncidentDetails = () => {
     INFO: "text-info"
   };
 
+  const handleExportReport = () => {
+    // Simulate report generation
+    toast({
+      title: "Report Exported",
+      description: "Incident report has been exported successfully",
+    });
+    
+    // Create a mock PDF download
+    const element = document.createElement('a');
+    const file = new Blob([`Incident Report - ${incident.id}\n\nTitle: ${incident.title}\nSeverity: ${incident.severity}\nStatus: ${incident.status}\n\nDescription: ${incident.description}`], 
+      {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = `incident-report-${incident.id}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const handleExecuteSolution = () => {
+    // Simulate solution execution
+    toast({
+      title: "Solution Executed",
+      description: "Automated solution has been deployed successfully",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -93,11 +131,11 @@ const IncidentDetails = () => {
           </div>
           
           <div className="flex items-center space-x-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleExportReport}>
               <ExternalLink className="h-4 w-4 mr-2" />
               Export Report
             </Button>
-            <Button>
+            <Button onClick={handleExecuteSolution}>
               <Play className="h-4 w-4 mr-2" />
               Execute Solution
             </Button>
@@ -357,19 +395,19 @@ const IncidentDetails = () => {
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start">
+                <Button className="w-full justify-start" onClick={() => setAiFixOpen(true)}>
                   <Zap className="h-4 w-4 mr-2" />
                   Apply AI Fix
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={() => setJiraOpen(true)}>
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Create Jira Ticket
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={() => setReassignOpen(true)}>
                   <User className="h-4 w-4 mr-2" />
                   Reassign Incident
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={() => setResolveOpen(true)}>
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Mark Resolved
                 </Button>
@@ -433,6 +471,29 @@ const IncidentDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <ReassignDialog
+        open={reassignOpen}
+        onOpenChange={setReassignOpen}
+        incidentId={incident.id}
+      />
+      <ResolveDialog
+        open={resolveOpen}
+        onOpenChange={setResolveOpen}
+        incidentId={incident.id}
+      />
+      <JiraDialog
+        open={jiraOpen}
+        onOpenChange={setJiraOpen}
+        incidentId={incident.id}
+        incidentTitle={incident.title}
+      />
+      <AIFixDialog
+        open={aiFixOpen}
+        onOpenChange={setAiFixOpen}
+        incidentId={incident.id}
+      />
     </div>
   );
 };

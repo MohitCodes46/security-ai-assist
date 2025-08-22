@@ -1,8 +1,11 @@
 import { Bell, Search, Settings, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 export const DashboardHeader = () => {
+  const navigate = useNavigate();
+  
   return (
     <header className="bg-card border-b border-border p-4">
       <div className="flex items-center justify-between">
@@ -30,7 +33,7 @@ export const DashboardHeader = () => {
             <Bell className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 h-3 w-3 bg-critical rounded-full animate-pulse"></span>
           </Button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
             <Settings className="h-5 w-5" />
           </Button>
         </div>
